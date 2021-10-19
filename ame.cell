@@ -1,0 +1,5 @@
+CrystFEL unit cell file version 1.0
+
+lattice_type = monoclinic
+unique_axis = b
+centering = P

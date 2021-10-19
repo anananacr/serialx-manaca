@@ -1,0 +1,5 @@
+CrystFEL unit cell file version 1.0
+
+lattice_type = tetragonal
+unique_axis = c
+centering = P
