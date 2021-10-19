@@ -45,19 +45,19 @@ def combine_param(curves, param):
 			string=""
 			string=str(i)+" "+str(j)
 			combined.append(string)
-	#print(combined)
 	return combined
 '''
-This function runs indexamajig with meu_string, , which is suitable for processing time tracking
+This function runs indexamajig with my_string, save its stdout and stderr, which will give indexing rate and processing time.
+Also, it searchs in the stream file all main parameters of crystals founded and write evrything in output.tab
 '''
-def grepindexamajig(meu_string, out, count):
-	resumo=sub.run(meu_string, shell=True, stdout=sub.PIPE, stderr=sub.PIPE)
+def grepindexamajig(my_string, out, count):
+	resumo=sub.run(my_string, shell=True, stdout=sub.PIPE, stderr=sub.PIPE)
 	resumoout=resumo.stdout.decode('utf-8')
 	resumoerr=resumo.stderr.decode('utf-8')
 	f=open("output.tab","a+")
 	print("\nIndexamajig finished command "+str(count)+"\n")
 	f=open("output.tab","a+")
-	f.write(meu_string+"\n")
+	f.write(my_string+"\n")
 	f.write(resumoerr)
 	f.write("\nEnd command "+str(count)+"\n")
 	f.write(resumoout)
@@ -100,9 +100,12 @@ def grepindexamajig(meu_string, out, count):
 	f.write(resumoout)
 	f.close()
 
+'''
+This function searchs output.tab from grepindexamjig function and return indexing rate, number of crystal founded, processing time, MAP, MPP, TAP
+'''
 def filesearch(inp):
-	meu_string=" grep -B2 'End' "+inp
-	resumo=sub.run(meu_string, shell=True, stdout=sub.PIPE, stderr=sub.PIPE)
+	my_string=" grep -B2 'End' "+inp
+	resumo=sub.run(my_string, shell=True, stdout=sub.PIPE, stderr=sub.PIPE)
 	resumoout=resumo.stdout.decode('utf-8')
 	index=[]
 	crystals=[]
@@ -124,8 +127,8 @@ def filesearch(inp):
 				string=string+resumoout[j]
 				j+=1
 			crystals.append(string)
-	meu_string="grep -B12 'Clock' "+inp
-	resumo=sub.run(meu_string, shell=True, stdout=sub.PIPE, stderr=sub.PIPE)
+	my_string="grep -B12 'Clock' "+inp
+	resumo=sub.run(my_string, shell=True, stdout=sub.PIPE, stderr=sub.PIPE)
 	resumoout=resumo.stdout.decode('utf-8')
 	for i in range(len(resumoout)):
 		if resumoout[i]==')'and resumoout[i+1]==':':
@@ -135,8 +138,8 @@ def filesearch(inp):
 				string=string+resumoout[j]
 				j+=1
 			time.append(string)
-	meu_string="grep -A4 'Peak-intensity' "+inp
-	resumo=sub.run(meu_string, shell=True, stdout=sub.PIPE, stderr=sub.PIPE)
+	my_string="grep -A4 'Peak-intensity' "+inp
+	resumo=sub.run(my_string, shell=True, stdout=sub.PIPE, stderr=sub.PIPE)
 	resumoout=resumo.stdout.decode('utf-8')
 	mpp=[]
 	map=[]
@@ -153,24 +156,28 @@ def filesearch(inp):
 			if resumoout[j+5]=="t": tap.append(string)
 	return(index, crystals, time,mpp,map,tap)
 
+'''
+This function searchs output.tab generated in grepindexamajig function, and creates a list of crystals founded with their main parameters associated, for every method tested in the peak searching optimization
+'''
+
 def filesearch_crystal(inp, cell_flag):
-	meu_string="grep 'Image serial number' "+inp
-	resumo=sub.run(meu_string, shell=True, stdout=sub.PIPE, stderr=sub.PIPE)
+	my_string="grep 'Image serial number' "+inp
+	resumo=sub.run(my_string, shell=True, stdout=sub.PIPE, stderr=sub.PIPE)
 	resumoid=resumo.stdout.decode('utf-8')
-	meu_string="grep 'Cell parameters' "+inp
-	resumo=sub.run(meu_string, shell=True, stdout=sub.PIPE, stderr=sub.PIPE)
+	my_string="grep 'Cell parameters' "+inp
+	resumo=sub.run(my_string, shell=True, stdout=sub.PIPE, stderr=sub.PIPE)
 	resumocell=resumo.stdout.decode('utf-8')
-	meu_string="grep 'lattice_type' "+inp
-	resumo=sub.run(meu_string, shell=True, stdout=sub.PIPE, stderr=sub.PIPE)
+	my_string="grep 'lattice_type' "+inp
+	resumo=sub.run(my_string, shell=True, stdout=sub.PIPE, stderr=sub.PIPE)
 	resumolatt=resumo.stdout.decode('utf-8')
-	meu_string="grep 'centering' "+inp
-	resumo=sub.run(meu_string, shell=True, stdout=sub.PIPE, stderr=sub.PIPE)
+	my_string="grep 'centering' "+inp
+	resumo=sub.run(my_string, shell=True, stdout=sub.PIPE, stderr=sub.PIPE)
 	resumocent=resumo.stdout.decode('utf-8')
-	meu_string="grep 'det_shift' "+inp
-	resumo=sub.run(meu_string, shell=True, stdout=sub.PIPE, stderr=sub.PIPE)
+	my_string="grep 'det_shift' "+inp
+	resumo=sub.run(my_string, shell=True, stdout=sub.PIPE, stderr=sub.PIPE)
 	resumoshift=resumo.stdout.decode('utf-8')
-	meu_string="grep 'indexed_by' "+inp
-	resumo=sub.run(meu_string, shell=True, stdout=sub.PIPE, stderr=sub.PIPE)
+	my_string="grep 'indexed_by' "+inp
+	resumo=sub.run(my_string, shell=True, stdout=sub.PIPE, stderr=sub.PIPE)
 	resumoidx=resumo.stdout.decode('utf-8')
 	id=[]
 	latt=[]
@@ -312,11 +319,14 @@ def filesearch_crystal(inp, cell_flag):
 			j+=1
 	return(methods, total)
 
+'''
+This function writes filesearch function output in a table and save in out.
+'''
+
 def fileformat(inp,out, curves, param):
 	test=[]
 	tmp=[]
 	print(inp)
-	#print(len(curves[0]))
 	for i in range(len(curves)):
 		if len(curves[0])==2:
 			test.append(curves[i][1])
@@ -352,6 +362,11 @@ def fileformat(inp,out, curves, param):
 			f.write(combined[i]+" "+index[i]+" "+crystals[i]+" "+time[i]+" "+mpp[i]+" "+map[i]+" "+tap[i]+"\n")
 	f.close()
 
+'''
+This function combines command line options of indexamajig with curves you already have tested and parameters you want to test in next peak seach optimization. 
+It builds my_string that will be used to call indexamajig in the grepindexamaijg function.
+'''
+
 def optloop(inp,out, curves,param, geom):
 	count=1
 	f=open("output.tab","w+")
@@ -370,23 +385,28 @@ def optloop(inp,out, curves,param, geom):
 		shelf=[" --peaks=", " --threshold="," --min-snr="," --min-pix-count="," --max-pix-count="," --local-bg-radius="," --min-res="," --max-res="]
 	for i in curves:
 		k=0
-		meu_string="indexamajig -i "+inp+" -g "+geom+" --indexing=mosflm -o "+out+" -j 28 --profile --no-refls-in-stream"
+		my_string="indexamajig -i "+inp+" -g "+geom+" --indexing=mosflm -o "+out+" -j 28 --profile --no-refls-in-stream"
 		while k<step:
-			meu_string=meu_string+shelf[k]+str(i[k])
+			my_string=my_string+shelf[k]+str(i[k])
 			k+=1
-			save_string=meu_string
+			save_string=my_string
 			#print(save_string)
 		for j in param:
 			if step==6 and curves[0][0]=='peakfinder8':
-				meu_string=meu_string+shelf[step]+str(j[0])+shelf[step+1]+str(j[1])
+				my_string=my_string+shelf[step]+str(j[0])+shelf[step+1]+str(j[1])
 			else:
-				meu_string=meu_string+shelf[step]+str(j)
-			#print(meu_string)
-			grepindexamajig(meu_string, out,count)
+				my_string=my_string+shelf[step]+str(j)
+			#print(my_string)
+			grepindexamajig(my_string, out,count)
 			count+=1
-			meu_string=save_string
+			my_string=save_string
 
 	#sub.call("mkdir peakopt_"+str(curves[0][0])+"_"+str(step)+"/; mv output.tab peakopt_"+str(curves[0][0])+"_"+str(step)+"/;", shell=True)
+
+
+'''
+This function saves stream sfiles for all final curves you have tested enabling their perfomance comparison.
+'''
 
 def finalpeakopt(inp,curves,geom,cell, proc):
 	count=1
@@ -397,17 +417,20 @@ def finalpeakopt(inp,curves,geom,cell, proc):
 		#print(i)
 		out="calibration_"+str(i)+".stream"
 		if curves[i][0]=='zaef':
-			meu_string="indexamajig -i "+inp+" -g "+geom+" --indexing=mosflm-latt-nocell --min-peaks=4 --peaks=zaef -o "+out+" -j "+str(proc)+" --threshold="+str(curves[i][1])+" --min-squared-gradient="+str(curves[i][2])+" --min-snr="+str(curves[i][3])+" --peak-radius="+str(curves[i][4])+" --profile"
-			if curves[i][5]==0: meu_string=meu_string+" --filter-noise"
-			elif curves[i][5]==' ': meu_string=meu_string
-			else: meu_string=meu_string+" --median-filter="+str(curves[i][5])
+			my_string="indexamajig -i "+inp+" -g "+geom+" --indexing=mosflm-latt-nocell --min-peaks=4 --peaks=zaef -o "+out+" -j "+str(proc)+" --threshold="+str(curves[i][1])+" --min-squared-gradient="+str(curves[i][2])+" --min-snr="+str(curves[i][3])+" --peak-radius="+str(curves[i][4])+" --profile"
+			if curves[i][5]==0: my_string=my_string+" --filter-noise"
+			elif curves[i][5]==' ': my_string=my_string
+			else: my_string=my_string+" --median-filter="+str(curves[i][5])
 		if curves[i][0]=='peakfinder8':
-			meu_string="indexamajig -i "+inp+" -g "+geom+" --indexing=mosflm-latt-nocell --min-peaks=4 --peaks=peakfinder8 -o "+out+" -j "+str(proc)+" --threshold="+str(curves[i][1])+" --min-snr="+str(curves[i][2])+" --min-pix-count="+str(curves[i][3])+" --max-pix-count="+str(curves[i][4])+" --local-bg-radius="+str(curves[i][5])+" --profile"
+			my_string="indexamajig -i "+inp+" -g "+geom+" --indexing=mosflm-latt-nocell --min-peaks=4 --peaks=peakfinder8 -o "+out+" -j "+str(proc)+" --threshold="+str(curves[i][1])+" --min-snr="+str(curves[i][2])+" --min-pix-count="+str(curves[i][3])+" --max-pix-count="+str(curves[i][4])+" --local-bg-radius="+str(curves[i][5])+" --profile"
 		if cell!=0:
-			meu_string=meu_string+" -p "+cell
-		grepindexamajig(meu_string,out, count)
+			my_string=my_string+" -p "+cell
+		grepindexamajig(my_string,out, count)
 		count+=1
 		i+=1
+'''
+This function is an attempt to communicate with users asking which peak search parameters in zaef method they want to test. In practice is better to pass parameters directly in the main function.
+'''
 
 def zaef_peakopt(inp,out,geom):
 	#zaef method
@@ -516,6 +539,10 @@ def zaef_peakopt(inp,out,geom):
 	
 	return(list_curves)
 
+
+'''
+This function is an attempt to communicate with users asking which peak search parameters in peakfinder8 method they want to test. In practice is better to pass parameters directly in the main function.
+'''
 def peakfinder8_peakopt(inp,out,geom):
 	#peakfinder8 method
 	method='peakfinder8'
@@ -581,6 +608,9 @@ def peakfinder8_peakopt(inp,out,geom):
 
 	return(list_curves)
 
+'''
+This function reads list of parameters changed from default by users. In practice is better to pass parameters directly in the main function.
+'''
 def read_list_param(method):
 	if method=="zaef": method=0
 	else: method=1
@@ -657,6 +687,9 @@ def read_list_param(method):
 	print(list_param)
 	return(list_param)
 
+'''
+This function sets default test parameters for zaef and peakfinder8 peak search methods.
+'''
 def set_param(method):
 	#zaef method
 	list_param=[]
@@ -712,6 +745,8 @@ def main():
 	inp="files.lst"
 	geom="pilatus2mpanel.geom"
 	out="calibration.stream"
+
+	#Users communication disbabled.
 	"""
 	method=input("Select your peaksearch method: 1- zaef 2-peakfinder8 ")
 	print("Peak search optmization: "+method+" method")
@@ -723,14 +758,26 @@ def main():
 		method='peakfinder8'
 		print("Peak search optmization: "+method+" method")
 		peakfinder8_peakopt(inp,out,geom)
-
-	####################
 	"""
 
-	#final=[['zaef',70,5000,10,[4,5,7],1],['zaef',70,5000,8,[2,3,4],0],['zaef',90,5000,5,[4,5,7],0],['peakfinder8',40,10,2,200,3],['peakfinder8',70,10,1,200,2],['peakfinder8',70,10,1,200,3]]
-	
+
+	method=2
+	if method=="1":
+                method='zaef'
+                print("Peak search optmization: "+method+" method")
+                zaef_peakopt(inp,out,geom)
+        if method=="2":
+                method='peakfinder8'
+                print("Peak search optmization: "+method+" method")
+                peakfinder8_peakopt(inp,out,geom)
+
+	#Final curves comparison
+
+	#curves=[['zaef',70,5000,10,[4,5,7],1],['zaef',70,5000,8,[2,3,4],0],['zaef',90,5000,5,[4,5,7],0],['peakfinder8',40,10,2,200,3],['peakfinder8',70,10,1,200,2],['peakfinder8',70,10,1,200,3]]
 	#curves=[['zaef',80,5000,4,'2,3,4',0],['zaef',80,5000,4,'2,3,4',6],['zaef',100,5000,4,'3,4,5',0],['peakfinder8',80,5,2,50,6], ['peakfinder8',100,5,2,50,6]]
 	curves=[['zaef',100,5000,4,'4,5,7',' ']]
+
+	#Histograms, shift maps and unit cell parameters according to the image ID plots for each curve. Here no unit cell is included.
 	"""
 	finalpeakopt(inp,curves,geom,0)
 	fileformat("output.tab","peakopt.tab",curves, [0])
@@ -741,18 +788,20 @@ def main():
 		crystplots.plot_crystals_cell(methods,total,i)
 	sub.call("mkdir finalopt; mv peakopt.tab finalopt; mv *.png finalopt", shell=True)
 	"""
-	finalpeakopt(inp,curves,geom,'liso.cell')
+	
+	#Histograms, shift maps and unit cell parameters according to the image ID plots for each curve. Here unit cell is included, substitute name.cell with your unit cell file.
+
+	"""
+	finalpeakopt(inp,curves,geom,'name.cell')
 	fileformat("output.tab","peakopt.tab",curves, [0])
 	methods,total=filesearch_crystal("output.tab")
-	"""
+	
 	for i in range(len(curves)):
 		crystplots.shift_map(methods,total,i)
 		crystplots.plot_hist(methods,total,i)
 		crystplots.plot_crystals_cell(methods,total,i)
 	sub.call("mkdir finalopt_cell; mv peakopt.tab finalopt; mv *.png finalopt_cell", shell=True)
-	"""
 
-	#plots comparison between peakoptions before and after cell input: (index,mpp,map,tap), shift_map, hist, cell_param_id for each option. Decide one of them.
-	
+	"""
 
 	####### End peak search optimization #########

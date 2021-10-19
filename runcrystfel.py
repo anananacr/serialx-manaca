@@ -16,6 +16,7 @@ import crystplots
 import peakopt
 import random
 
+
 def gen_geom(coff, det_dist):
 	f=open("pilatus2mpanel.geom","w+")
 	up=";Pilatus 2M\nphoton_energy = 12688\nadu_per_eV = 0.0001\nclen = "
