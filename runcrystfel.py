@@ -16,7 +16,9 @@ import crystplots
 import peakopt
 import random
 
-"""This function generates the geometry file for a detector  to sample distance of det_dist added a step of coff"""
+"""
+This function generates the geometry file for a detector to sample distance of det_dist added a step of coff
+"""
 def gen_geom(coff, det_dist):
 	f=open("pilatus2mpanel.geom","w+")
 	up=";Pilatus 2M\nphoton_energy = 12688\nadu_per_eV = 0.0001\nclen = "
@@ -25,7 +27,9 @@ def gen_geom(coff, det_dist):
 	f.write(up+str(coff+det_dist)+down)
 	#print(up+str(coff)+down)
 	f.close()
-
+"""
+This function calls cell_explorer CrystFEL script for unit cell parameters fitting
+"""
 def cellfit(curves,out,cell):
 	count=0
 	for i in curves:
@@ -33,6 +37,9 @@ def cellfit(curves,out,cell):
 		sub.call("cell_explorer "+out[count], shell= True)
 		count+=1
 
+"""
+This function calls indexamajig CrystFEL script with a list of peak search parameters (curves), input file *.lst (inp), output files *.stream (out), geometry file *geom (geom), unit cell file *.cell (cell), string of indexing methods (idx), list of integration parameters (int), number of processors (proc)
+"""
 def runindexamajig(curves,inp, out, geom, cell, idx, int, proc):
         #curves rebe parâmetros de uma rodada do indexamjig
 	count=1
@@ -52,7 +59,9 @@ def runindexamajig(curves,inp, out, geom, cell, idx, int, proc):
 		peakopt.grepindexamajig(meu_string, out+".stream", count)
 		sub.call("mv output.tab "+out+".tab",shell=True)
 	sub.call("mkdir "+out+"/; mv "+out+".tab "+out+"/; mv "+out+".stream "+out+"/ ;mv *.tab "+out+"/", shell=True)
-
+"""
+This function calls indexamajig changing detector distance to sample from vmin to vmax in steps of step.
+"""
 def clen_opt(vmin,vmax,step, inp, geom, curves,cellf):
 	n=int(((vmax-vmin)/step)+1)
 	offset=np.linspace(vmin,vmax,n)
@@ -76,7 +85,9 @@ def clen_opt(vmin,vmax,step, inp, geom, curves,cellf):
 			sub.call("mv *.png clen_"+str(count)+"_"+str(run)+"/", shell=True)
 			count+=1
 		run+=1
-
+"""
+This function calls detector-shift CrystFEL script 3 times in arrow, user should select beam shift clusters to correct beam center position.
+"""
 def detshift(inpf,curves, geomf,cellf):
 	#curves=[['zaef',70,5000,10,[4,5,7],1],['peakfinder8',40,10,2,200,3],['zaef',70,5000,8,[2,3,4],0],['peakfinder8',70,10,1,200,2]]
 	runs=[1,2,3]
@@ -138,8 +149,9 @@ def detshift(inpf,curves, geomf,cellf):
 			sub.call("mv *.png "+out[j]+"_run_"+str(i)+"/",shell=True)
 			cont+=1
 
-
-
+"""
+This function randonmly shuffle indexing methods order.
+"""
 def rand_tests(init):
 	save=[]
 	tests=[]
@@ -163,7 +175,9 @@ def rand_tests(init):
 		save=[]
 		k+=1
 	return(tests)
-
+"""
+This function perfoms all possible combination of r indexing methods from opt list of indexing methods to be tested. 
+"""
 def select_idx(opt, r):
 	n=len(opt)
 	same=[]
@@ -185,7 +199,10 @@ def select_idx(opt, r):
 			tests.append(update)
 	return(tests)
 
-def indexingopt(inp, out, peakpar, geom, cell,int, r):
+"""
+This function tests different indexing methods available in CrystFEL and plot their performance comparatevely.
+"""
+def indexingopt(inp, out, peakpar, geom, cell,int, r, proc):
 	#idx=['mosflm-nolatt-nocell','mosflm-latt-nocell','mosflm-nolatt-cell','mosflm-latt-cell','dirax-nolatt-nocell','asdf-nolatt-nocell','asdf-nolatt-cell','xds-nolatt-nocell','xds-latt-cell','xgandalf-nolatt-nocell','xgandalf-nolatt-cell','taketwo-latt-cell']
 	#idx=['mosflm-nolatt-nocell','mosflm-latt-nocell','mosflm-nolatt-cell','mosflm-latt-cell','dirax-nolatt-nocell','asdf-nolatt-nocell','asdf-nolatt-cell','xds-nolatt-nocell','xds-latt-cell','xgandalf-nolatt-nocell','xgandalf-nolatt-cell']
 	#at least 3 options should be passed to rand_tests it will return 4 tests with the methods passed but in random positions
@@ -253,17 +270,19 @@ def indexingopt(inp, out, peakpar, geom, cell,int, r):
 			tick+="+"
 		labels.append(tick[:-1])
 		tick=""
-		runindexamajig(peakpar,inp,out+'_'+str(r)+'_'+str(count),geom,cell,idx[:-1],int,28)
+		runindexamajig(peakpar,inp,out+'_'+str(r)+'_'+str(count),geom,cell,idx[:-1],int,proc)
 		peakopt.fileformat(out+'_'+str(r)+'_'+str(count)+"/"+out+'_'+str(r)+'_'+str(count)+'.tab',"peakopt.tab",[[0,count]], [0])
 		sub.call('mv peakopt.tab '+out+'_'+str(r)+'_'+str(count)+"/", shell=True)
-		#file_search_crystal
-		#plot histogram and cell_id
 		sub.call('mkdir idx_'+str(r)+'/; mv '+out+'_'+str(r)+'_'+str(count)+'/ idx_'+str(r)+'/', shell=True)
 		count+=1
 	print('asdf',a,'dirax',b,'mosflm',c,'take',d,'xds',e,'xgandalf',xg)
 	print(labels)
 	crystplots.plot_idx(labels,r)
 	return(labels)
+
+"""
+This function optimizes integration parameters.
+"""
 
 def intopt(inp,out, peakpar,geom,cell):
 	#int=[['rings','nocen'],['rings','cen'],['prof2d','cen'],['prof2d','nocen']]
@@ -282,6 +301,10 @@ def intopt(inp,out, peakpar,geom,cell):
 		methods,total=peakopt.filesearch_crystal('output.tab')
 		crystplots.plot_crystals_vol(methods,total,rad)
 		sub.call("mv *.png "+out+"/"+";mv output.tab output_"+str(k)+".tab", shell=True)
+"""
+This function runs merging process for partialator or process_hkl methods. Here, scaling, partialities and/or post-refinement can be turned on/off. 
+"""
+
 def runmerge(dir, y, adu, method):
 	meu_string=""
 	rx = re.compile(r'\.(stream)')
@@ -363,6 +386,9 @@ def runmerge(dir, y, adu, method):
 			count+=1
 		sub.call("mkdir process_hkl/; mv *hkl* process_hkl/", shell=True)
 
+"""
+This function calls compare_hkl and check_hkl for figures of merit calculation.
+"""
 def calcfig(dir, cell, y,method):
 
 	meu_string=""
@@ -431,6 +457,10 @@ def calcfig(dir, cell, y,method):
 				meu_string=""
 			count+=1
 		sub.call("mkdir compare_hkl/; mv *.dat compare_hkl/", shell=True)
+"""
+This function calls create-mtz CrystFEL script with user's specific  space group and unit cell parameters.
+"""
+
 def convertmtz(inp):
 	group='P43212'
 	cell="79 79 37 90 90 90"
@@ -449,6 +479,10 @@ def convertmtz(inp):
 	g.close()
 	f.close()
 	sub.call("chmod +x create-mtz-mod;./create-mtz-mod "+inp, shell=True)
+
+"""
+This function calls create-xscale CrystFEL script with user's specific space group and unit cell parameters. 
+"""
 
 def convertxscale(inp):
         group='96'
@@ -471,26 +505,38 @@ def convertxscale(inp):
 
 def main():
 	#### Start detector corrections #######
-#	curves=[['zaef',70,5000,5,[4,5,7],1],['peakfinder8',40,5,2,200,3],['zaef',200,25000,5,[3,4,5]],['peakfinder8',200,6,2,200,3]]
+
+	#curves=[['zaef',70,5000,5,[4,5,7],1],['peakfinder8',40,5,2,200,3],['zaef',200,25000,5,[3,4,5]],['peakfinder8',200,6,2,200,3]]
 	#curves=[['zaef',80,5000,4,'2,3,4',0],['zaef',80,5000,4,'2,3,4',6],['zaef',100,5000,4,'3,4,5',6],['peakfinder8',80,5,2,50,6],['peakfinder8',100,5,2,50,6]]
 	#curves=[['zaef',10,5000,4,'4,5,7',' '],['zaef',100,5000,4,'4,5,7',' '],['peakfinder8',10,3,2,20,6],['peakfinder8',100,3,2,20,6]]
 	curves=[['zaef',10,5000,4,'4,5,7',' ']]
 	stream=["calibration_0.stream"]
 	inp='files_500.lst'
 	geom="pilatus2mpanel.geom"
+	
+	"""
+	Detector distance to sample optimization.
+	"""
+
 	#cell="calib.cell"
 	#clen_opt(-5*1e-4,5*1e-4,1e-4, inp, geom, curves,cell)
 	#clen_opt(4*1e-4,6*1e-4,2*1e-5, inp, geom, curves,cell)
 	det_dist=0.1255
 	#update clen in the geom file call finalpeakopt ame.cell to see if the indexing is better
+
+	"""
+	Unit cell file, if no unit cell file should be included cell=0
+	"""
 	#cell=0
-	cell="liso.cell"
-	#cell='ame.cell'
+	#cell="liso.cell"
+
 	#peakopt.finalpeakopt(inp,curves,geom,cell,400)
 	#peakopt.fileformat("liso_1_0.tab","peakopt.tab",curves, [0])
 	#methods, total=peakopt.filesearch_crystal('liso_1_0.tab',1)
 
-	#plot cell fitting histograms
+	"""
+	Plot of unit cell parameters histograms.
+	"""
 
 	'''
 	for i in range(len(curves)):
@@ -498,39 +544,68 @@ def main():
 		crystplots.plot_hist(methods,total, i)
 		crystplots.plot_crystals_cell(methods,total, i)
 	'''
+
 	#crystplots.compare_hist(methods,total)
+	
+	"""
+	Unit cell fitting with cell_explorer from CrystFEL
+	"""
+
 	#cellfit(curves, stream, cell)
 
+
+	"""
+	Beam shift position corrections
+	"""
 	#detshift(inp,curves, geom, cell)
 
 	#find det_0_run_3.tab to see if scores are better than before det_shift
 
 	####### End detector corrections ########
 
+	
+
 	############## Start indexing optimization ###################
-	#choose one peakparam option from now
-	#indexing long file lst few thousands of image files unit cell with cell param 
+	#Choose one peakparam option from now
+	#Indexing long file.lst (few thousands of images) and unit cell parameters file fitted in last step.
+
 	inp='files_16.lst'
 	geom="pilatus2mpanel.geom"
 	cell="0_liso_after.cell"
 	out='intopt'
+	"""
+	Integration parameters optimization
+	"""
 	#intopt(inp,out, curves,geom,cell)
+
+	"""
+	Indexing methods optimization
+	"""
 
 	out="liso"
 	int=['rings','nocen','4,5,7']
 	r=1
 
-	#labels=indexingopt(inp,out,curves,geom,cell,int,r)
+	#labels=indexingopt(inp,out,curves,geom,cell,int,r, proc)
 
 	xlabel=['0','1','2','3','4','5','6','7','8','9','10','11']
-	crystplots.plot_idx(xlabel,1)
+	#crystplots.plot_idx(xlabel,1)
 	
-	#if ame
+
+	###############End indexing optimization##################
+	
+	############### Start merging and FoM calculation ##########################
+
 	results='./results/'
 	stream=[results+'idx_all_64/idx_1/',results+'idx_all_48/idx_1/',results+'idx_all_32/idx_1/',results+'idx_all_16/idx_1/']
 	methods=[1,2]
 	dir_compare=[]
 	dir_check=[]
+
+	"""
+	Merging and FoM calc
+	"""
+
 	'''
 	for j in methods:
 		for i in stream:
@@ -541,8 +616,12 @@ def main():
 			calcfig(i+'process_hkl',cell,'4/mmm',j)
 			sub.call('mv c*/ '+i+'process_hkl', shell=True)
 			sub.call('mv p*/ '+i, shell=True)
+	'''
 	
-	
+	"""
+	FoM comparative plots
+	"""
+
 	for i in stream:
 		dir_check.append(i+'partialator/check_hkl/')
 		dir_compare.append(i+'partialator/compare_hkl/')
@@ -550,18 +629,18 @@ def main():
 	label=[['64'],['48'],['32'],['16']]
 	crystplots.plot_check(label,'part','0', dir_check)
 	crystplots.plot_compare(label,'part','0', dir_compare)
-        '''
+        
 
-	#if ame
-        #runmerge(idx_1,'2_uab','100000',2)
-        #calcfig('partialator_ame_',cell,'2_uab')
+	#ame y=2_uab
+	#liso y=4/mmm
 
-        #if liso
-        #runmerge('idx_1','4/mmm','100000',2)
-        #calcfig('partialator_liso_',cell,'4/mmm')
+	################### End merging and FoM calculation #########################
 
-	###################
-	#decide your final data to convert
+	################## Start conversions ########################################
+
+	#user decide final data to convert
 	#inp="process_hkl_1/_3.hkl"
 	#convertmtz(inp)
 	#convertxscale(inp)
+
+	################# End conversions ###########################################
