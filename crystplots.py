@@ -23,9 +23,9 @@ import mpl_toolkits.axisartist as AA
 import os
 import matplotlib.image as mpimg
 
-def remove_repetidos(lista):
+def remove_repeated(lst):
 	l = []
-	for i in lista:
+	for i in lst:
 		if i not in l:
 			l.append(i)
 	l.sort()
