@@ -11,7 +11,9 @@ import crystplots
 import seaborn as sns
 import pandas as pd
 
-# This class saves all information obtained from each crystal founded by CrstFEL in a run of indexamajig.
+'''
+This class saves all information obtained from each crystal founded by CrstFEL in a run of indexamajig.
+'''
 class crystal:
 	def __init__(self, crystal_param):
 		self.id=crystal_param[0]
@@ -390,13 +392,11 @@ def optloop(inp,out, curves,param, geom):
 			my_string=my_string+shelf[k]+str(i[k])
 			k+=1
 			save_string=my_string
-			#print(save_string)
 		for j in param:
 			if step==6 and curves[0][0]=='peakfinder8':
 				my_string=my_string+shelf[step]+str(j[0])+shelf[step+1]+str(j[1])
 			else:
 				my_string=my_string+shelf[step]+str(j)
-			#print(my_string)
 			grepindexamajig(my_string, out,count)
 			count+=1
 			my_string=save_string
