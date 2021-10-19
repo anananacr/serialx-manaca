@@ -16,7 +16,7 @@ import crystplots
 import peakopt
 import random
 
-
+"""This function generates the geometry file for a detector  to sample distance of det_dist added a step of coff"""
 def gen_geom(coff, det_dist):
 	f=open("pilatus2mpanel.geom","w+")
 	up=";Pilatus 2M\nphoton_energy = 12688\nadu_per_eV = 0.0001\nclen = "
