@@ -23,6 +23,11 @@ import mpl_toolkits.axisartist as AA
 import os
 import matplotlib.image as mpimg
 
+
+"""
+This function remove repeated items from a list
+"""
+
 def remove_repeated(lst):
 	l = []
 	for i in lst:
@@ -30,13 +35,18 @@ def remove_repeated(lst):
 			l.append(i)
 	l.sort()
 	return l
-
+"""
+This function defines Gaussian distribution function.
+"""
 def normal(mean, std, color="black"):
     x = np.linspace(mean-4*std, mean+4*std, 200)
     p = stats.norm.pdf(x, mean, std)
     z = plt.plot(x, p, color, linewidth=1, ls='-')
 
 
+"""
+This function calculates unit cell volume from all 6 unit cell parameters
+"""
 def calc_vol(ra,rb,rc,ralf,rbet,rgam):
 	#if abc in A
 	fac_a=0.1
@@ -52,7 +62,9 @@ def calc_vol(ra,rb,rc,ralf,rbet,rgam):
 	rgam=fac*rgam
 	vol=ra*rb*rc*math.sqrt(1-pow(math.cos(ralf),2)-pow(math.cos(rbet),2)-pow(math.cos(rgam),2) +2*math.cos(ralf)*math.cos(rbet)*math.cos(rgam))
 	return(vol)
-
+"""
+Comparative plot for peak searching optimization
+"""
 def plot(method,rate,labels, labels_par):
 	step=len(labels[0])
     #sns.set_style("darkgrid", {"axes.facecolor": ".9"})
@@ -115,6 +127,10 @@ def plot(method,rate,labels, labels_par):
 	plt.savefig("plot_"+rate+".png")
     #sub.call("mkdir peakopt_"+str(method)+"_"+str(step-1)+"/; mv *.tab peakopt_"+str(method)+"_"+str(step-1)+"/; mv *.png peakopt_"+str(method)+"_"+str(step-1)+"/;", shell=True)
 
+
+"""
+Comparative plot for peak searching optimization 
+"""
 def plot_thr(method,rate,labels, labels_param):
 	step=len(labels[0])
 	art=0
@@ -172,6 +188,9 @@ def plot_thr(method,rate,labels, labels_param):
 	plt.savefig("plot_thr_"+rate+".png")
 	sub.call("mkdir peakopt_"+str(method)+"_"+str(step-1)+"/; mv *t.tab peakopt_"+str(method)+"_"+str(step-1)+"/; mv *.png peakopt_"+str(method)+"_"+str(step-1)+"/;", shell=True)
 
+"""
+Comparative plot for peak searching optimization when applying filters in zaef method 
+"""
 def plot_median(rate,labels,labels_par):
 	#plot index rate vs threshold for each par (sqrd or snr)
 	majorLocator = MultipleLocator(20)
@@ -224,14 +243,15 @@ def plot_median(rate,labels,labels_par):
 
 
 	plt.show()
-
+"""
+Comparative plot for peak searching optimization when applying filters in zaef method 
+"""
 def plot_median_thr(rate,labels, labels_par):
 	#plot index rate vs par (sqrd or snr) for each threshold
 	majorLocator = MultipleLocator(20)
 	majorFormatter = FormatStrFormatter('%d')
 	minorLocator = MultipleLocator(5)
 	sns.set_context("paper")
-	#upa o dado na mesma pasta e troca o nome do arquivo
 	data_dir = "./"
 	folder=['peakopt_zaef_4',"peakopt_zaef_5", "peakopt_zaef_6"]
 	title=["MF", "MF+NOI", "NOI"]
@@ -241,12 +261,11 @@ def plot_median_thr(rate,labels, labels_par):
 	ax = fig.add_subplot(1,1,1)
 	for k in folder:
 		data = os.path.join(data_dir+k, 'peakopt.tab')
-		#carrega dados
 		df= pd.read_csv(data, delimiter=' ', skiprows=0,usecols=(0,1,2,3,4,5,6,7))
 		thr=df['thr'].to_list()
 		param=df['sqrd'].to_list()
 		score=df[rate].to_list()
-    #ver quais curvas vai ter que plotar quantos valores de sqrd/snr foram testados
+
 		curves=remove_repetidos(thr)
 		if rate=="mpp":
 			ax.set_ylabel('Mean peaks per pattern', fontsize=10)
@@ -278,6 +297,9 @@ def plot_median_thr(rate,labels, labels_par):
 
 	plt.show()
 
+"""
+Plot unit cell parameters according to crystals ID
+"""
 def plot_crystals_cell(methods,total, opt):
 	param=['a','b','c','alf','bet','gam']
 	colors=['r','b','g','darkorange','darkviolet', 'grey']
@@ -320,6 +342,9 @@ def plot_crystals_cell(methods,total, opt):
 	plt.savefig('cell_id_'+str(opt)+'.png')
 	plt.close()
 
+"""
+Plot unit cell volume according to crystals ID.
+"""
 def plot_crystals_vol(methods,total,labels):
 	colors=['r','b','g','darkorange','darkviolet', 'grey']
 	fig = plt.figure(figsize=(9, 7), tight_layout=True)
@@ -351,6 +376,9 @@ def plot_crystals_vol(methods,total,labels):
 	plt.savefig('vol_id_ringsnocen.png')
 	#plt.close()
 
+"""
+Heat map plot for calculated detector shift.
+"""
 def shift_map(methods,total, opt):
 	pointsx=[]
 	pointsy=[]
@@ -378,6 +406,9 @@ def shift_map(methods,total, opt):
 	#plt.show()
 	plt.savefig("detshift_"+str(opt)+".png")
 
+"""
+Unit cell distribution histograms plot.
+"""
 def plot_hist(methods,total, opt):
 	#print(methods, total)
 	pointsx=[]
@@ -473,6 +504,9 @@ def plot_hist(methods,total, opt):
 	plt.savefig("hist_all_"+str(opt)+".png")
 	plt.close()
 
+"""
+Comparative plots of indexing methods performance.
+"""
 def plot_idx(x_labels, step):
 
 	majorLocator = MultipleLocator(2)
@@ -553,6 +587,9 @@ def plot_idx(x_labels, step):
 	#plt.show()
 	plt.savefig("indx_"+str(step)+".png")
 
+"""
+Plot figures of merit calculated by check_hkl
+"""
 def plot_check(labels,method,run,dir):
 	#plot index rate vs threshold for each par (sqrd or snr)
 	majorLocator = MultipleLocator(20)
@@ -662,6 +699,9 @@ def plot_check(labels,method,run,dir):
 		param+=1
 	sub.call("mv *.png "+data_dir+";mv *resume*.txt "+data_dir, shell=True)
 
+"""
+Plot FoM calculated by compare_hkl.
+"""
 def plot_compare(labels,method,run, dir):
 	#plot index rate vs threshold for each par (sqrd or snr)
 	majorLocator = MultipleLocator(20)
@@ -759,6 +799,10 @@ def plot_compare(labels,method,run, dir):
 		plt.close()
 		#plt.show()
 	sub.call("mv *_compare*.png "+data_dir+";mv *resume*.tab "+data_dir, shell=True)
+
+"""
+Superposition of two histogram plots.
+"""
 
 def compare_hist(methods,total):
         #print(methods, total)
