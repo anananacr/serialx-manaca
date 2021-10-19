@@ -11,6 +11,7 @@ import crystplots
 import seaborn as sns
 import pandas as pd
 
+# This class saves all information obtained from each crystal founded by CrstFEL in a run of indexamajig.
 class crystal:
 	def __init__(self, crystal_param):
 		self.id=crystal_param[0]
@@ -25,12 +26,18 @@ class crystal:
 		self.detshift=crystal_param[9]
 		self.idx=crystal_param[10]
 
-def print_date(arquivo):
+'''
+This function prints date in a file, which is suitable for processing time tracking
+'''
+def print_date(file):
 	now = datetime.now()
-	f=open(arquivo,"a+") 
+	f=open(file,"a+") 
 	f.write("\nClock "+str(now.year)+"."+str(now.month)+"."+str(now.day)+" "+str(now.hour)+":"+str(now.minute)+":"+str(now.second)+"\n")
 	f.close()
 
+'''
+This function combines two lists one by one and return a list with combined components in a string separated by an space.
+'''
 def combine_param(curves, param):
 	combined=[]
 	for i in curves:
@@ -40,7 +47,9 @@ def combine_param(curves, param):
 			combined.append(string)
 	#print(combined)
 	return combined
-
+'''
+This function runs indexamajig with meu_string, , which is suitable for processing time tracking
+'''
 def grepindexamajig(meu_string, out, count):
 	resumo=sub.run(meu_string, shell=True, stdout=sub.PIPE, stderr=sub.PIPE)
 	resumoout=resumo.stdout.decode('utf-8')
