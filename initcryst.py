@@ -1,14 +1,16 @@
 import peakopt
 import runcrystfel
 import crystplots
+
+#Peak search optimization
 #peakopt.main()
+
+#Unit cell parameters distribution, indexing, integration, merging, calculation of figures of merit using indexamajig and conversions to mtz or xscale files
 runcrystfel.main()
-#peakopt.filesearch_crystal("output.tab")
-#label=[['dirax-nolatt-nocell', 'asdf-nolatt-cell'], ['xds-latt-cell', 'mosflm-latt-cell'], ['xds-latt-cell', 'xgandalf-nolatt-cell'], ['xds-latt-cell', 'asdf-nolatt-nocell'], ['mosflm-nolatt-nocell', 'dirax-nolatt-nocell'], ['asdf-nolatt-cell', 'mosflm-nolatt-cell'], ['xds-nolatt-nocell', 'mosflm-latt-nocell'], ['mosflm-latt-nocell', 'mosflm-latt-cell'], ['xgandalf-nolatt-cell', 'mosflm-nolatt-nocell'], ['dirax-nolatt-nocell', 'mosflm-nolatt-cell'], ['xds-latt-cell', 'mosflm-latt-nocell'], ['mosflm-nolatt-nocell', 'asdf-nolatt-nocell'], ['xgandalf-nolatt-nocell', 'dirax-nolatt-nocell'], ['mosflm-nolatt-cell', 'mosflm-latt-cell'], ['xds-nolatt-nocell', 'asdf-nolatt-cell'], ['mosflm-nolatt-nocell', 'xgandalf-nolatt-nocell'], ['xds-nolatt-nocell', 'dirax-nolatt-nocell'], ['asdf-nolatt-nocell', 'dirax-nolatt-nocell'], ['asdf-nolatt-cell', 'mosflm-latt-cell'], ['xds-nolatt-nocell', 'asdf-nolatt-nocell'], ['xds-latt-cell', 'mosflm-nolatt-nocell'], ['asdf-nolatt-nocell', 'xgandalf-nolatt-nocell'], ['mosflm-latt-nocell', 'mosflm-nolatt-cell'], ['mosflm-latt-nocell', 'asdf-nolatt-nocell'], ['xgandalf-nolatt-nocell', 'mosflm-latt-nocell'], ['xds-nolatt-nocell', 'mosflm-latt-cell'], ['xgandalf-nolatt-cell', 'dirax-nolatt-nocell'], ['xgandalf-nolatt-nocell', 'mosflm-latt-cell'], ['mosflm-nolatt-cell', 'xgandalf-nolatt-cell'], ['xds-nolatt-nocell', 'xds-latt-cell'], ['mosflm-latt-cell', 'mosflm-nolatt-nocell'], ['xgandalf-nolatt-cell', 'mosflm-latt-nocell'], ['mosflm-nolatt-nocell', 'mosflm-latt-nocell'], ['xgandalf-nolatt-nocell', 'xds-nolatt-nocell'], ['mosflm-latt-cell', 'dirax-nolatt-nocell'], ['xgandalf-nolatt-cell', 'xgandalf-nolatt-nocell'], ['xds-nolatt-nocell', 'mosflm-nolatt-nocell'], ['dirax-nolatt-nocell', 'xds-latt-cell'], ['xgandalf-nolatt-nocell', 'mosflm-nolatt-cell'], ['mosflm-nolatt-cell', 'mosflm-nolatt-nocell'], ['asdf-nolatt-nocell', 'xgandalf-nolatt-cell'], ['xds-latt-cell', 'asdf-nolatt-cell'], ['asdf-nolatt-cell', 'mosflm-nolatt-nocell'], ['asdf-nolatt-cell', 'mosflm-latt-nocell'], ['xgandalf-nolatt-cell', 'asdf-nolatt-cell'], ['asdf-nolatt-nocell', 'mosflm-latt-cell'], ['mosflm-nolatt-cell', 'xds-nolatt-nocell'], ['xgandalf-nolatt-nocell', 'asdf-nolatt-cell'], ['xds-latt-cell', 'xgandalf-nolatt-nocell'], ['mosflm-nolatt-cell', 'asdf-nolatt-nocell'], ['dirax-nolatt-nocell', 'mosflm-latt-nocell'], ['xgandalf-nolatt-cell', 'mosflm-latt-cell'], ['xds-latt-cell', 'mosflm-nolatt-cell'], ['xgandalf-nolatt-cell', 'xds-nolatt-nocell'], ['asdf-nolatt-nocell', 'asdf-nolatt-cell']]
-#label=[['mosflm-nolatt-nocell'], ['xgandalf-nolatt-nocell'], ['xds-nolatt-nocell'], ['xds-latt-cell'], ['mosflm-nolatt-cell'], ['dirax-nolatt-nocell'], ['mosflm-latt-nocell'], ['xgandalf-nolatt-cell'], ['mosflm-latt-cell'], ['taketwo-latt-cell'], ['asdf-nolatt-nocell'], ['asdf-nolatt-cell']]
+
+#Comparatevely plot of figures of merit in resolution shells for different subdatasets (labels) in different paths (dir)
 #label=[['16'],['32'],['48'],['64']]
-#label=[['XGNLC,MNLNC,XDLC']]
-dir=['../20210611_16/compare_hkl_part_liso_11_0/','../20210616_32/compare_hkl_part_liso_11_0/','../20210625_48/compare_hkl_part_liso_11_0/', '../20210627_64/compare_hkl_part_liso_11_0/']
+#dir=['../20210611_16/compare_hkl_part_liso_11_0/','../20210616_32/compare_hkl_part_liso_11_0/','../20210625_48/compare_hkl_part_liso_11_0/', '../20210627_64/compare_hkl_part_liso_11_0/']
 #dir=['../20210611_16/check_hkl_part_liso_11_/','../20210616_32/check_hkl_part_liso_11_/','../20210625_48/check_hkl_part_liso_11_/', '../20210627_64/check_hkl_part_liso_11_/']
 
 #crystplots.plot_check(label,'part','0', dir)
