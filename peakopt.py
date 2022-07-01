@@ -408,7 +408,7 @@ def optloop(inp,out, curves,param, geom):
 This function saves stream sfiles for all final curves you have tested enabling their perfomance comparison.
 '''
 
-def finalpeakopt(inp,curves,geom,cell, proc):
+def finalpeakopt(inp,curves,geom,cell,proc):
 	count=1
 	f=open("output.tab","w+")
 	i=0
@@ -763,13 +763,13 @@ def main():
 
 	method=2
 	if method=="1":
-                method='zaef'
-                print("Peak search optmization: "+method+" method")
-                zaef_peakopt(inp,out,geom)
-        if method=="2":
-                method='peakfinder8'
-                print("Peak search optmization: "+method+" method")
-                peakfinder8_peakopt(inp,out,geom)
+		method='zaef'
+		print("Peak search optmization: "+method+" method")
+		zaef_peakopt(inp,out,geom)
+	if method=="2":
+		method='peakfinder8'
+		print("Peak search optmization: "+method+" method")
+		peakfinder8_peakopt(inp,out,geom)
 
 	#Final curves comparison
 

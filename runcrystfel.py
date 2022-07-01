@@ -33,7 +33,7 @@ This function calls cell_explorer CrystFEL script for unit cell parameters fitti
 def cellfit(curves,out,cell):
 	count=0
 	for i in curves:
-		print("Save as : "+str(count)+"_"+cell)
+		print("Save as : "+str(count)+"_cell.cell")
 		sub.call("cell_explorer "+out[count], shell= True)
 		count+=1
 
@@ -48,14 +48,20 @@ def runindexamajig(curves,inp, out, geom, cell, idx, int, proc):
 	meu_string=" "
 	for i in curves:
 		if i[0]=='zaef':
-			meu_string="indexamajig -i "+inp+" -g "+geom+" --peaks=zaef --indexing="+idx+" --min-peaks=4 --integration="+int[0]+"-"+int[1]+" --int-rad="+int[2]+" -o "+out+".stream -j "+str(proc)+" --threshold="+str(i[1])+" --min-squared-gradient="+str(i[2])+" --min-snr="+str(i[3])+" --peak-radius="+str(i[4])+" --profile -p "+cell
-			if len(i)>5:
-				if i[5]==0: meu_string=meu_string+" --filter-noise"
-				if i[5]==' ': meu_string=meu_string
-				else: meu_string=meu_string+" --median-filter="+str(i[5])
+			if idx==0:
+				meu_string=" indexamajig -i {inp} -g {geom} --peaks=zaef --min-peaks=14 --integration={int[0]}-{int[1]} --int-rad={int[2]} -o {out}.stream -j {proc} --threshold={i[1]} --min-squared-gradient={i[2]} --min-snr={i[3]} --peak-radius={i[4]} --profile -p {cell}"
+			else:
+				meu_string=" indexamajig -i {inp} -g {geom} --peaks=zaef --indexing={idx} --min-peaks=14 --integration={int[0]}-{int[1]} --int-rad={int[2]} -o {out}.stream -j {proc} --threshold={i[1]} --min-squared-gradient={i[2]} --min-snr={i[3]} --peak-radius={i[4]} --profile -p {cell}"
+				if len(i)>5:
+					if i[5]==0: meu_string=meu_string+" --filter-noise"
+					if i[5]==' ': meu_string=meu_string
+					else: meu_string=meu_string+" --median-filter="+str(i[5])
 		if i[0]=='peakfinder8':
-			meu_string="indexamajig -i "+inp+" -g "+geom+" --peaks=peakfinder8 --indexing="+idx+" --min-peaks=4 --integration="+int[0]+"-"+int[1]+" --int-rad="+int[2]+" -o "+out+".stream -j "+str(proc)+" --threshold="+str(i[1])+" --min-snr="+str(i[2])+" --min-pix-count="+str(i[3])+" --max-pix-count="+str(i[4])+" --local-bg-radius="+str(i[5])+" --profile -p "+cell
-		#print(meu_string)
+			if idx==0:
+				meu_string=f" indexamajig -i {inp} -g {geom} -o {out}.stream -j {proc} -p {cell} --peaks=peakfinder8 --threshold={i[1]} --min-snr={i[2]} --min-pix-count={i[3]} --max-pix-count={i[4]} --local-bg-radius={i[5]} --min-res=0 --max-res=2000 --min-peaks=14 --peak-radius=4.0,5.0,7.0 --integration={int[0]}-{int[1]} --int-rad={int[2]} --multi --profile "
+			else:
+				meu_string=f" indexamajig -i {inp} -g {geom} -o {out}.stream -j {proc} -p {cell} --peaks=peakfinder8 --indexing={idx} --threshold={i[1]} --min-snr={i[2]} --min-pix-count={i[3]} --max-pix-count={i[4]} --local-bg-radius={i[5]} --min-res=0 --max-res=2000 --min-peaks=14 --peak-radius=4.0,5.0,7.0 --integration={int[0]}-{int[1]} --int-rad={int[2]} --multi --profile "
+		print(meu_string)
 		peakopt.grepindexamajig(meu_string, out+".stream", count)
 		sub.call("mv output.tab "+out+".tab",shell=True)
 	sub.call("mkdir "+out+"/; mv "+out+".tab "+out+"/; mv "+out+".stream "+out+"/ ;mv *.tab "+out+"/", shell=True)
@@ -270,7 +276,8 @@ def indexingopt(inp, out, peakpar, geom, cell,int, r, proc):
 			tick+="+"
 		labels.append(tick[:-1])
 		tick=""
-		runindexamajig(peakpar,inp,out+'_'+str(r)+'_'+str(count),geom,cell,idx[:-1],int,proc)
+		#runindexamajig(peakpar,inp,out+'_'+str(r)+'_'+str(count),geom,cell,idx[:-1],int,proc)
+		runindexamajig(peakpar,inp,out+'_'+str(r)+'_'+str(count),geom,cell,0,int,proc)
 		peakopt.fileformat(out+'_'+str(r)+'_'+str(count)+"/"+out+'_'+str(r)+'_'+str(count)+'.tab',"peakopt.tab",[[0,count]], [0])
 		sub.call('mv peakopt.tab '+out+'_'+str(r)+'_'+str(count)+"/", shell=True)
 		sub.call('mkdir idx_'+str(r)+'/; mv '+out+'_'+str(r)+'_'+str(count)+'/ idx_'+str(r)+'/', shell=True)
@@ -312,16 +319,18 @@ def runmerge(dir, y, adu, method):
 	for path, dnames, fnames in os.walk(dir):
 		r.extend([os.path.join(path, x) for x in fnames if rx.search(x)])
 	beg=len(dir)
-	k=beg+1
+	k=beg
 	name=''
+	print(r)
 	out=[]
 	for i in r:
-		while i[k]!='/':
+		while i[k]!='.':
 			name=name+i[k]
 			k+=1
+		print(name)
 		out.append(name+".hkl")
 		name=''
-		k=beg+1
+		k=beg
 
 	count=0
 	"""
@@ -333,40 +342,16 @@ def runmerge(dir, y, adu, method):
 	"""
 	if method==2:
 		#partialator
-		shelf=["partialator -j 200","-i "," -o "," -y "," --max-adu="," --model="," --iterations="," --no-pr"," --no-scale"]
-		sca=1
-		part=1
-		pr=1
-		"""
-		sca=int(input("Merge with scaling 1-yes 0-no:"))
-		part=int(input("Merge with partialities 1-yes 0-no:"))
-		pr=int(input("Merge with post-refinement 1-yes 0-no:"))
-		err=(input("You chose (1) yes (0) no: scaling "+str(sca)+" partialities "+str(part)+" and post-refine "+str(pr)+". Do you wanna edit your options y/n"))
-		while err!='n':
-			sca=int(input("Merge with scaling 1-yes 0-no:"))
-			part=int(input("Merge with partialities 1-yes 0-no:"))
-			pr=int(input("Merge with post-refinement 1-yes 0-no:"))
-			err=(input("You chose (1) yes (0) no: scaling "+str(sca)+" partialities "+str(part)+" and post-refine "+str(pr)+". Do you wanna edit your options y/n"))
-		"""
+		shelf=[" partialator -j 40 --polarisation=horiz --min-measurements=2 --min-res=inf --push-res=inf --no-logs","-i "," -o "," -y "," --max-adu="," --model="," --iterations="," --no-pr"]
+
 		for i in r:
-			if sca==0 and part==0 and pr==0:
-                        	curves=[[" ",i, out[count], y, adu, 'unity', '0']]
-			if sca==1 and part==0 and pr==0:
-				curves=[[" ",i, out[count], y, adu, 'unity', '1']]
-			if sca==0 and part==1 and pr==0:
-				curves=[[" ",i, out[count], y, adu, 'xsphere', '0']]
-			if sca==1 and part==1 and pr==0:
-				curves=[[" ",i, out[count], y, adu, 'xsphere', '1', ' ']]
-			if sca==1 and part==1 and pr==1:
-				curves=[[" ",i, out[count][:-4]+"_0"+out[count][-4:], y,adu, 'xsphere', '1']]
-			if sca==0 and part==1 and pr==1:
-				curves=[[" ",i, out[count], y, adu, 'xsphere', '1', " "]]
-				shelf.pop(7)
+			curves=[[" ",i, out[count], y, adu, 'unity', '3', ' ']]
+			
 			flag=0
 			for k in curves:
 				for j in range(len(k)):
 					meu_string=meu_string+shelf[j]+k[j]
-				#print(meu_string)
+				print(meu_string)
 				sub.call(meu_string,shell=True)
 				meu_string=""
 				sub.call("mv pr-logs/ pr-logs_"+out[count][:-4]+"_"+str(flag)+"/", shell=True)
@@ -375,7 +360,7 @@ def runmerge(dir, y, adu, method):
 		sub.call("mkdir partialator/; mv pr-logs*/ partialator/; mv *hkl* partialator/", shell=True)
 	if method==1:
                 #process_hkl
-		shelf=["process_hkl","-i "," -o "," -y "," --max-adu="," --scale"]
+		shelf=[" process_hkl","-i "," -o "," -y "," --max-adu="," --scale --polarisation=horiz --min-measurements=2 --min-res=inf --push-res=inf"]
 		for i in r:
 			curves=[[" ", i, out[count], y, adu, " "],[" ", i, out[count]+"1 --even-only", y, adu, " "],[" ", i, out[count]+"2 --odd-only", y, adu, " "]]
 			for k in curves:
@@ -407,7 +392,7 @@ def calcfig(dir, cell, y,method):
 		while i[k]!='.':
 			name=name+i[k]
 			k+=1
-		out.append(dir[:4]+"_"+name)
+		out.append(name)
 		name=''
 		k=beg+1
 	print(out)
@@ -422,6 +407,7 @@ def calcfig(dir, cell, y,method):
 			for k in curves:
 				for j in range(len(k)):
 					meu_string=meu_string+shelf[j]+k[j]
+                                
 				resumo=sub.run(meu_string, shell=True, stdout=sub.PIPE, stderr=sub.PIPE)
 				resumoout=resumo.stdout.decode('utf-8')
 				resumoerr=resumo.stderr.decode('utf-8')
@@ -446,7 +432,7 @@ def calcfig(dir, cell, y,method):
 						meu_string=meu_string+shelf[j]+k
 					else:
 						meu_string=meu_string+shelf[j]+curves[j]
-				#print(meu_string)
+				print(meu_string)
 				resumo=sub.run(meu_string, shell=True, stdout=sub.PIPE, stderr=sub.PIPE)
 				resumoout=resumo.stdout.decode('utf-8')
 				resumoerr=resumo.stderr.decode('utf-8')
@@ -461,59 +447,19 @@ def calcfig(dir, cell, y,method):
 This function calls create-mtz CrystFEL script with user's specific  space group and unit cell parameters.
 """
 
-def convertmtz(inp):
-	group='P43212'
-	cell="79 79 37 90 90 90"
-	f=open("create-mtz","r")
-	g=open("create-mtz-mod","+w")
-	g=open("create-mtz-mod","+w")
-	count=0
-	for x in f:
-		if count==30:
-			g.write("CELL "+cell+"\n")
-		elif count==31:
-			g.write("SYMM "+group+"\n")
-		else:
-			g.write(x)
-		count+=1
-	g.close()
-	f.close()
-	sub.call("chmod +x create-mtz-mod;./create-mtz-mod "+inp, shell=True)
+def export_file(inp,cell,out,file_format):
+	cmd=f"get_hkl -i {inp} -p {cell} -o {out} --output-format={file_format}"
+	sub.call(cmd, shell=True)
 
-"""
-This function calls create-xscale CrystFEL script with user's specific space group and unit cell parameters. 
-"""
-
-def convertxscale(inp):
-        group='96'
-        cell="79 79 38 90 90 90"
-        f=open("create-xscale","r")
-        g=open("create-xscale-mod","+w")
-        g=open("create-xscale-mod","+w")
-        count=0
-        for x in f:
-                if count==14:
-                        g.write(x[0:31]+cell+x[-6:])
-                elif count==13:
-                        g.write(x[0:28]+group+x[-6:])
-                else:
-                        g.write(x)
-                count+=1
-        g.close()
-        f.close()
-        sub.call("chmod +x create-xscale-mod;./create-xscale-mod "+inp+">"+inp[:-4]+"_xds.hkl", shell=True)
 
 def main():
 	#### Start detector corrections #######
 
-	#curves=[['zaef',70,5000,5,[4,5,7],1],['peakfinder8',40,5,2,200,3],['zaef',200,25000,5,[3,4,5]],['peakfinder8',200,6,2,200,3]]
-	#curves=[['zaef',80,5000,4,'2,3,4',0],['zaef',80,5000,4,'2,3,4',6],['zaef',100,5000,4,'3,4,5',6],['peakfinder8',80,5,2,50,6],['peakfinder8',100,5,2,50,6]]
-	#curves=[['zaef',10,5000,4,'4,5,7',' '],['zaef',100,5000,4,'4,5,7',' '],['peakfinder8',10,3,2,20,6],['peakfinder8',100,3,2,20,6]]
-	curves=[['zaef',10,5000,4,'4,5,7',' ']]
+	curves=[['peakfinder8',50,5,2,200,3]]
 	stream=["calibration_0.stream"]
-	inp='files_500.lst'
-	geom="pilatus2mpanel.geom"
-	
+	inp='files_1.lst'
+	geom="../../calib/jf-swissfel-16M.geom"
+	mask="../../calib/run47.JF06T32V01.mask.h5"
 	"""
 	Detector distance to sample optimization.
 	"""
@@ -528,22 +474,22 @@ def main():
 	Unit cell file, if no unit cell file should be included cell=0
 	"""
 	#cell=0
-	#cell="liso.cell"
+	cell="0_cell.cell"
 
-	#peakopt.finalpeakopt(inp,curves,geom,cell,400)
-	#peakopt.fileformat("liso_1_0.tab","peakopt.tab",curves, [0])
-	#methods, total=peakopt.filesearch_crystal('liso_1_0.tab',1)
+	#peakopt.finalpeakopt(inp,curves,geom,cell,40)
+	#peakopt.fileformat("output.tab","peakopt.tab",curves, [0])
+	#methods, total=peakopt.filesearch_crystal('output.tab',0)
 
 	"""
 	Plot of unit cell parameters histograms.
 	"""
 
-	'''
-	for i in range(len(curves)):
-		print(i)
-		crystplots.plot_hist(methods,total, i)
-		crystplots.plot_crystals_cell(methods,total, i)
-	'''
+	
+	#for i in range(len(curves)):
+	#	print(i)
+	#	crystplots.plot_hist(methods,total, i)
+	#	crystplots.plot_crystals_cell(methods,total, i)
+
 
 	#crystplots.compare_hist(methods,total)
 	
@@ -569,9 +515,7 @@ def main():
 	#Choose one peakparam option from now
 	#Indexing long file.lst (few thousands of images) and unit cell parameters file fitted in last step.
 
-	inp='files_16.lst'
-	geom="pilatus2mpanel.geom"
-	cell="0_liso_after.cell"
+	cell="1_cell.cell"
 	out='intopt'
 	"""
 	Integration parameters optimization
@@ -582,11 +526,11 @@ def main():
 	Indexing methods optimization
 	"""
 
-	out="liso"
-	int=['rings','nocen','4,5,7']
+	out="tutorial"
+	integ=['rings','nocen','4,5,7']
 	r=1
 
-	#labels=indexingopt(inp,out,curves,geom,cell,int,r, proc)
+	#labels=indexingopt(inp,out,curves,geom,cell,integ,r, 40)
 
 	xlabel=['0','1','2','3','4','5','6','7','8','9','10','11']
 	#crystplots.plot_idx(xlabel,1)
@@ -597,7 +541,7 @@ def main():
 	############### Start merging and FoM calculation ##########################
 
 	results='./results/'
-	stream=[results+'idx_all_64/idx_1/',results+'idx_all_48/idx_1/',results+'idx_all_32/idx_1/',results+'idx_all_16/idx_1/']
+	stream=[results+'tutorial_1/idx_1/']
 	methods=[1,2]
 	dir_compare=[]
 	dir_check=[]
@@ -605,31 +549,35 @@ def main():
 	"""
 	Merging and FoM calc
 	"""
-
-	'''
-	for j in methods:
-		for i in stream:
-			#runmerge(i,'4/mmm','100000',j)
-			#sub.call('mv p*/ '+i, shell=True)
-			calcfig(i+'partialator',cell,'4/mmm',j)
-			sub.call('mv c*/ '+i+'partialator', shell=True)
-			calcfig(i+'process_hkl',cell,'4/mmm',j)
-			sub.call('mv c*/ '+i+'process_hkl', shell=True)
-			sub.call('mv p*/ '+i, shell=True)
 	'''
 	
+	for j in methods:
+		for i in stream:
+			runmerge(i,'mmm','100000',j)
+			sub.call('mv p*/ '+i, shell=True)
+	for j in methods:
+		for i in stream:
+			calcfig(i+'partialator',cell,'mmm',j)
+			sub.call('mv c*/ '+i+'partialator/', shell=True)
+	for j in methods:
+		for i in stream:
+			calcfig(i+'process_hkl',cell,'mmm',j)
+			sub.call('mv c*/ '+i+'process_hkl', shell=True)
+			sub.call('mv pr-*/ '+i, shell=True)
+	
+	'''
 	"""
 	FoM comparative plots
 	"""
-
+	'''
 	for i in stream:
 		dir_check.append(i+'partialator/check_hkl/')
 		dir_compare.append(i+'partialator/compare_hkl/')
 
-	label=[['64'],['48'],['32'],['16']]
+	label=[['final']]
 	crystplots.plot_check(label,'part','0', dir_check)
 	crystplots.plot_compare(label,'part','0', dir_compare)
-        
+        '''
 
 	#ame y=2_uab
 	#liso y=4/mmm
@@ -639,8 +587,8 @@ def main():
 	################## Start conversions ########################################
 
 	#user decide final data to convert
-	#inp="process_hkl_1/_3.hkl"
-	#convertmtz(inp)
-	#convertxscale(inp)
+	inp="./results/tutorial_1/idx_1/partialator/tutorial_1_0.hkl"
+	out="results/tutorial_1/idx_1/partialator/tutorial_1.mtz"
 
-	################# End conversions ###########################################
+	export_file(inp,cell,out,'mtz')
+
