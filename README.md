@@ -8,7 +8,8 @@ Automatic data processing pipeline for Serial Crystallography on Manacá beamlin
 Tested on dataset referenced in Crystfel's tutorial (0.10.1) https://gitlab.desy.de/thomas.white/crystfel/-/blob/3619f795/doc/articles/tutorial.rst 
 
 Commands:
-#Edit proc_config.py with your correct parameters
+
+- First, edit proc_config.py with your correct parameters
 
 python3 runcrystfel.py -m index_no_cell>out.txt&
 
