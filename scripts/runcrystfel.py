@@ -523,7 +523,7 @@ def main(raw_args=None):
 	parser = argparse.ArgumentParser(
 	description="Decode and sum up Jungfrau images.")
 	parser.add_argument("-m", "--mode", type=str, action="store",
-	help="mode option in CrystFEL: index_no_ref_cell,index_ref_cell, index_cell, index_all, merge_all, fom_plots, export_mtz ")
+	help="mode option in CrystFEL: index_no_ref_cell,index_ref_cell, index_all, merge_all, fom_plots, export_mtz ")
 	args = parser.parse_args(raw_args)
 
 	var=proc_param()
