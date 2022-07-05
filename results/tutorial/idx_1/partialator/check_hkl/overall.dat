@@ -1,0 +1,11 @@
+Discarded 0 reflections (out of 18645) with I/sigma(I) < -inf
+1/d goes from 0.256063 to 4.058757 nm^-1
+Overall values within specified resolution range:
+WARNING: 1 reflections had infinite or invalid values of I/sigma(I).
+187334 measurements in total.
+18645 reflections in total.
+22003 reflections possible.
+Overall <snr> = 0.998739
+Overall redundancy = 10.047412 measurements/unique reflection
+Overall completeness = 84.738445 %
+Resolution shell information written to tutorial_0.dat.

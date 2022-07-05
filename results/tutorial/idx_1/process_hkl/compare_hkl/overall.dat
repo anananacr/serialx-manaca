@@ -1,0 +1,24 @@
+../results/tutorial/idx_1/process_hkl/tutorial_0.hkl1: 16316 reflections, resolution range 39.05 to 2.46 Angstroms (0.25606 to 4.05876 nm^-1).
+../results/tutorial/idx_1/process_hkl/tutorial_0.hkl2: 16260 reflections, resolution range 39.05 to 2.48 Angstroms (0.25606 to 4.03584 nm^-1).
+14435 reflection pairs accepted.
+Accepted resolution range: 0.256063 to 3.992599 nm^-1 (39.05 to 2.50 Angstroms).
+Relative scale factor = 1.192452, relative B factor = -0.069003 A^2
+A scale factor greater than 1 means that the second reflection list is weaker than the first.
+A positive relative B factor means that the second reflection list falls off with resolution more quickly than the first.
+Overall Rsplit = 60.47 %
+../results/tutorial/idx_1/process_hkl/tutorial_0.hkl1: 16316 reflections, resolution range 39.05 to 2.46 Angstroms (0.25606 to 4.05876 nm^-1).
+../results/tutorial/idx_1/process_hkl/tutorial_0.hkl2: 16260 reflections, resolution range 39.05 to 2.48 Angstroms (0.25606 to 4.03584 nm^-1).
+14435 reflection pairs accepted.
+Accepted resolution range: 0.256063 to 3.992599 nm^-1 (39.05 to 2.50 Angstroms).
+Relative scale factor = 1.192452, relative B factor = -0.069003 A^2
+A scale factor greater than 1 means that the second reflection list is weaker than the first.
+A positive relative B factor means that the second reflection list falls off with resolution more quickly than the first.
+Overall CC = 0.5416961
+../results/tutorial/idx_1/process_hkl/tutorial_0.hkl1: 16316 reflections, resolution range 39.05 to 2.46 Angstroms (0.25606 to 4.05876 nm^-1).
+../results/tutorial/idx_1/process_hkl/tutorial_0.hkl2: 16260 reflections, resolution range 39.05 to 2.48 Angstroms (0.25606 to 4.03584 nm^-1).
+14435 reflection pairs accepted.
+Accepted resolution range: 0.256063 to 3.992599 nm^-1 (39.05 to 2.50 Angstroms).
+Relative scale factor = 1.192452, relative B factor = -0.069003 A^2
+A scale factor greater than 1 means that the second reflection list is weaker than the first.
+A positive relative B factor means that the second reflection list falls off with resolution more quickly than the first.
+Overall CC* = 0.8382884
