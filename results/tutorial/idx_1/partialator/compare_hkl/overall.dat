@@ -1,24 +1,24 @@
-../results/tutorial/idx_1/partialator/tutorial_0.hkl1: 15888 reflections, resolution range 37.67 to 2.48 Angstroms (0.26544 to 4.03639 nm^-1).
-../results/tutorial/idx_1/partialator/tutorial_0.hkl2: 16059 reflections, resolution range 39.05 to 2.48 Angstroms (0.25606 to 4.03584 nm^-1).
-13992 reflection pairs accepted.
+../results/tutorial/idx_1/partialator/tutorial_0.hkl1: 15713 reflections, resolution range 37.67 to 2.48 Angstroms (0.26544 to 4.03584 nm^-1).
+../results/tutorial/idx_1/partialator/tutorial_0.hkl2: 16164 reflections, resolution range 39.05 to 2.46 Angstroms (0.25606 to 4.05876 nm^-1).
+13927 reflection pairs accepted.
 Accepted resolution range: 0.265438 to 3.965486 nm^-1 (37.67 to 2.52 Angstroms).
-Relative scale factor = 1.040877, relative B factor = -0.552974 A^2
+Relative scale factor = 1.018023, relative B factor = -0.230696 A^2
 A scale factor greater than 1 means that the second reflection list is weaker than the first.
 A positive relative B factor means that the second reflection list falls off with resolution more quickly than the first.
-Overall Rsplit = 61.79 %
-../results/tutorial/idx_1/partialator/tutorial_0.hkl1: 15888 reflections, resolution range 37.67 to 2.48 Angstroms (0.26544 to 4.03639 nm^-1).
-../results/tutorial/idx_1/partialator/tutorial_0.hkl2: 16059 reflections, resolution range 39.05 to 2.48 Angstroms (0.25606 to 4.03584 nm^-1).
-13992 reflection pairs accepted.
+Overall Rsplit = 61.87 %
+../results/tutorial/idx_1/partialator/tutorial_0.hkl1: 15713 reflections, resolution range 37.67 to 2.48 Angstroms (0.26544 to 4.03584 nm^-1).
+../results/tutorial/idx_1/partialator/tutorial_0.hkl2: 16164 reflections, resolution range 39.05 to 2.46 Angstroms (0.25606 to 4.05876 nm^-1).
+13927 reflection pairs accepted.
 Accepted resolution range: 0.265438 to 3.965486 nm^-1 (37.67 to 2.52 Angstroms).
-Relative scale factor = 1.040877, relative B factor = -0.552974 A^2
+Relative scale factor = 1.018023, relative B factor = -0.230696 A^2
 A scale factor greater than 1 means that the second reflection list is weaker than the first.
 A positive relative B factor means that the second reflection list falls off with resolution more quickly than the first.
-Overall CC = 0.5422856
-../results/tutorial/idx_1/partialator/tutorial_0.hkl1: 15888 reflections, resolution range 37.67 to 2.48 Angstroms (0.26544 to 4.03639 nm^-1).
-../results/tutorial/idx_1/partialator/tutorial_0.hkl2: 16059 reflections, resolution range 39.05 to 2.48 Angstroms (0.25606 to 4.03584 nm^-1).
-13992 reflection pairs accepted.
+Overall CC = 0.5693737
+../results/tutorial/idx_1/partialator/tutorial_0.hkl1: 15713 reflections, resolution range 37.67 to 2.48 Angstroms (0.26544 to 4.03584 nm^-1).
+../results/tutorial/idx_1/partialator/tutorial_0.hkl2: 16164 reflections, resolution range 39.05 to 2.46 Angstroms (0.25606 to 4.05876 nm^-1).
+13927 reflection pairs accepted.
 Accepted resolution range: 0.265438 to 3.965486 nm^-1 (37.67 to 2.52 Angstroms).
-Relative scale factor = 1.040877, relative B factor = -0.552974 A^2
+Relative scale factor = 1.018023, relative B factor = -0.230696 A^2
 A scale factor greater than 1 means that the second reflection list is weaker than the first.
 A positive relative B factor means that the second reflection list falls off with resolution more quickly than the first.
-Overall CC* = 0.8385841
+Overall CC* = 0.8518252

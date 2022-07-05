@@ -1,6 +1,6 @@
 class proc_param():
 	curves=[['peakfinder8',50,5,2,200,3]]
-	stream=["../indexing/tutorial_0.stream"]
+	stream=["./tutorial/tutorial.stream"]
 	inp='../lists/files.lst'
 	n_proc=40
 	label="tutorial"

@@ -65,7 +65,10 @@ def runindexamajig(curves,inp, out, geom, cell, idx, int, proc):
 			if idx==0:
 				meu_string=f"/software/crystfel/0.10.1/bin/indexamajig -i {inp} -g {geom} -o {out}.stream -j {proc} -p {cell} --peaks=peakfinder8 --threshold={i[1]} --min-snr={i[2]} --min-pix-count={i[3]} --max-pix-count={i[4]} --local-bg-radius={i[5]} --min-res=10 --max-res=1000 --min-peaks=14 --peak-radius=4.0,5.0,7.0 --integration={int[0]}-{int[1]} --int-rad={int[2]} --multi --profile "
 			else:
-				meu_string=f"/software/crystfel/0.10.1/bin/indexamajig -i {inp} -g {geom} -o {out}.stream -j {proc} -p {cell} --peaks=peakfinder8 --indexing={idx} --threshold={i[1]} --min-snr={i[2]} --min-pix-count={i[3]} --max-pix-count={i[4]} --local-bg-radius={i[5]} --min-res=10 --max-res=1000 --min-peaks=14 --peak-radius=4.0,5.0,7.0 --integration={int[0]}-{int[1]} --int-rad={int[2]} --multi --profile "
+				if cell==0:
+					meu_string=f"/software/crystfel/0.10.1/bin/indexamajig -i {inp} -g {geom} -o {out}.stream -j {proc} --peaks=peakfinder8 --indexing={idx} --threshold={i[1]} --min-snr={i[2]} --min-pix-count={i[3]} --max-pix-count={i[4]} --local-bg-radius={i[5]} --min-res=10 --max-res=1000 --min-peaks=14 --peak-radius=4.0,5.0,7.0 --integration={int[0]}-{int[1]} --int-rad={int[2]} --multi --profile "
+				else:
+					meu_string=f"/software/crystfel/0.10.1/bin/indexamajig -i {inp} -g {geom} -o {out}.stream -j {proc} -p {cell} --peaks=peakfinder8 --indexing={idx} --threshold={i[1]} --min-snr={i[2]} --min-pix-count={i[3]} --max-pix-count={i[4]} --local-bg-radius={i[5]} --min-res=10 --max-res=1000 --min-peaks=14 --peak-radius=4.0,5.0,7.0 --integration={int[0]}-{int[1]} --int-rad={int[2]} --multi --profile "
 		print(meu_string)
 		peakopt.grepindexamajig(meu_string, out+".stream", count)
 		sub.call("mv output.tab "+out+".tab",shell=True)
@@ -454,8 +457,10 @@ def export_file(inp,cell,out,file_format):
 	sub.call(cmd, shell=True)
 
 def index_no_cell(var):
-	peakopt.finalpeakopt(var.inp,var.curves,var.label,var.geom,var.cell,var.n_proc)
-	peakopt.fileformat("output.tab","peakopt.tab",var.curves, [0])
+	if var.cell==0:
+		runindexamajig(var.curves,var.inp, var.label, var.geom, var.cell, 'mosflm-latt-nocell --no-check-cell', var.integ, var.n_proc)
+	else:
+		runindexamajig(var.curves,var.inp, var.label, var.geom, var.cell, 'xgandalf --no-cell-combinations --no-check-cell', var.integ, var.n_proc)
 
 	#methods, total=peakopt.filesearch_crystal('output.tab',0)
 	
@@ -464,7 +469,9 @@ def index_no_cell(var):
 	#	crystplots.plot_hist(methods,total, i)
 	#	crystplots.plot_crystals_cell(methods,total, i)
 	#crystplots.compare_hist(methods,total)
+	print(f'./{var.label}/{var.label}.stream')
 	cellfit(var.curves, var.stream)
+
 def index_all(var):
 	labels=indexingopt(var.inp,var.label,var.curves,var.geom,var.cell,var.integ,var.r, var.n_proc)
 
@@ -498,7 +505,7 @@ def show_plots(var):
 	"""
 	FoM comparative plots
 	"""
-	results='../results/'
+	results='../results'
 	stream=[f'{results}/{var.label}/idx_1/']
 	dir_check=[]
 	dir_compare=[]
@@ -516,14 +523,15 @@ def main(raw_args=None):
 	parser = argparse.ArgumentParser(
 	description="Decode and sum up Jungfrau images.")
 	parser.add_argument("-m", "--mode", type=str, action="store",
-	help="mode option in CrystFEL: index_no_cell, index_cell, index_all, merge_all, fom_plots, export_mtz ")
+	help="mode option in CrystFEL: index_no_ref_cell,index_ref_cell, index_cell, index_all, merge_all, fom_plots, export_mtz ")
 	args = parser.parse_args(raw_args)
 
 	var=proc_param()
 
-	if args.mode=='index_no_cell':
+	if args.mode=='index_no_ref_cell':
 		index_no_cell(var)
-	if args.mode=='index_cell':
+	if args.mode=='index_ref_cell':
+		#var.cell='../lysozyme.cell'
 		var.cell='../0_cell.cell'
 		index_no_cell(var)
 	if args.mode=='index_all':
